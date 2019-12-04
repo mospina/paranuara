@@ -5,7 +5,7 @@ from django.db import models
 class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
-    index = models.IntegerField()
+    index = models.IntegerField(unique=True)
     name = models.CharField(max_length=100)
 
     def __str__(self):
@@ -20,8 +20,8 @@ class Company(models.Model):
             json_data = json.load(fh)
         fh.close()
 
-        companies = map(
-            lambda entry: cls(index=entry['index'], name=entry['company']),
-            json_data
-        )
-        cls.objects.bulk_create(companies)
+        for entry in json_data:
+            cls.objects.get_or_create(
+                index=entry['index'],
+                name=entry['company']
+            )

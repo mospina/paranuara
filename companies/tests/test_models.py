@@ -1,14 +1,19 @@
-import unittest
-# from companies import fileloader
+from django.test import TestCase
 from companies.models import Company
 
-class TestFileLoader(unittest.TestCase):
+class TestFileLoader(TestCase):
 
     def test_load_data_from_file(self):
         before_count = Company.objects.count()
-        result = Company.load_data_from_file('../../resources/companies.json')
+        Company.load_data_from_file('../../resources/companies.json')
         after_count = Company.objects.count()
 
         self.assertGreater(after_count, before_count)
 
-    # test_index_must_be_unique
+    def test_index_must_be_unique(self):
+        Company.load_data_from_file('../../resources/companies.json')
+        before_count = Company.objects.count()
+        Company.load_data_from_file('../../resources/companies.json')
+        after_count = Company.objects.count()
+
+        self.assertEqual(after_count, before_count)
