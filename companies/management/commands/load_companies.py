@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from companies import fileloader
+from companies.models import Company
 
 class Command(BaseCommand):
     help = "Read data from a json file and store it in the database"
@@ -9,4 +9,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options): 
         for filename in options['filenames']:
-            fileloader.load_data_from_file(filename)
+            Company.load_data_from_file(filename)
