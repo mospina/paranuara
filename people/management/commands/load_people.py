@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand, CommandError
-from people.models import People
+from people.loader import load_data_from_file
 
 class Command(BaseCommand):
     help = "Read data from a json file and store it in the database"
@@ -9,4 +9,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options): 
         for filename in options['filenames']:
-            People.load_data_from_file(filename)
+            load_data_from_file(filename)

@@ -2,10 +2,13 @@ import json
 from decimal import Decimal
 import re
 from datetime import datetime, timedelta
+import logging
 
 from companies.models import Company
 from people.models import Tag, Fruit, Vegetable, Person
 from people.models import KNOWN_FRUITS, KNOWN_VEGETABLES
+
+logger = logging.getLogger(__name__)
 
 def load_data_from_file(file_path):
     with open(file_path, newline='') as fh:
@@ -32,7 +35,6 @@ def get_person(person, data):
         eyeColor=person['eyeColor'],
         name=person['name'],
         gender=person['gender'],
-        company=get_company(person['company_id']),
         email=person['email'],
         phone=person['phone'],
         address=person['address'],
@@ -44,10 +46,15 @@ def get_person(person, data):
     # favouriteFood
     obj.favouriteFruits.add(*get_fruits(fruits))
     obj.favouriteVegetables.add(*get_vegetables(vegetables))
+    # friends
     friends = get_friends(person['friends'], data)
     for friend in friends:
         if friend:
             obj.friends.add(friend)
+    #company
+    company = get_company(person['company_id'])
+    if company:
+        obj.company = company
     return obj
 
 def get_friends(friends, data):
@@ -91,7 +98,9 @@ def get_company(company_index):
     try:
         obj = Company.objects.get(index=company_index)
     except Company.DoesNotExist:
-        raise Company.DoesNotExist("Load companies first.")
+        logger.warning("Company {} doesn't exist".format(company_index))
+        return None
+        # raise Company.DoesNotExist("{} doesn't exist. Load companies first.".format(company_index))
     else:
         return obj
 
