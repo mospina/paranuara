@@ -1,7 +1,7 @@
 from django.test import TestCase
 from companies.models import Company
 
-class TestFileLoader(TestCase):
+class TestCompanyFileLoader(TestCase):
 
     def test_load_data_from_file(self):
         before_count = Company.objects.count()

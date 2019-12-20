@@ -1,50 +1,59 @@
 from django.db import models
 
-# Create your models here.
-class People(models.Model):
-    "_id": "595eeb9b96d80a5bc7afb106",
-    "index": 0,
-    "guid": "5e71dc5d-61c0-4f3b-8b92-d77310c7fa43",
-    has_died = models.BooleanField()
-    balance = models.DecimalField(max_digits=10, decimal_places=2
-    "balance": "$2,418.59",
-    "picture": "http://placehold.it/32x32",
-    "age": 61,
-    "eyeColor": "blue",
-    "name": "Carmella Lambert",
-    "gender": "female",
-    "company_id": 58,
-    "email": "carmellalambert@earthmark.com",
-    "phone": "+1 (910) 567-3630",
-    "address": "628 Sumner Place, Sperryville, American Samoa, 9819",
-    "about": "Non duis dolore ad enim. Est id reprehenderit cupidatat tempor excepteur. Cupidatat labore incididunt nostrud exercitation ullamco reprehenderit dolor eiusmod sit exercitation est. Voluptate consectetur est fugiat magna do laborum sit officia aliqua magna sunt. Culpa labore dolore reprehenderit sunt qui tempor minim sint tempor in ex. Ipsum aliquip ex cillum voluptate culpa qui ullamco exercitation tempor do do non ea sit. Occaecat laboris id occaecat incididunt non cupidatat sit et aliquip.\r\n",
-    "registered": "2016-07-13T12:29:07 -10:00",
-    "tags": [
-      "id",
-      "quis",
-      "ullamco",
-      "consequat",
-      "laborum",
-      "sint",
-      "velit"
-    ],
-    "friends": [
-      {
-        "index": 0
-      },
-      {
-        "index": 1
-      },
-      {
-        "index": 2
-      }
-    ],
-    "greeting": "Hello, Carmella Lambert! You have 6 unread messages.",
-    "favouriteFood": [
-      "orange",
-      "apple",
-      "banana",
-      "strawberry"
-    ]
-  },
+from companies.models import Company
 
+GENDER_CHOICES = (
+    ('M', 'Male'),
+    ('F', 'Female'),
+    ('N', 'No response')
+)
+
+KNOWN_FRUITS = ['orange', 'banana', 'strawberry', 'apple']
+
+KNOWN_VEGETABLES = ['cucumber', 'carrot', 'celery', 'beetroot']
+
+class Tag(models.Model):
+    label = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.label
+
+class Fruit(models.Model):
+    name = models.CharField(max_length=32)
+
+    def __str__(self):
+        return self.name
+
+class Vegetable(models.Model):
+    name = models.CharField(max_length=32)
+
+    def __str__(self):
+        return self.name
+
+class Person(models.Model):
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    modified_at = models.DateTimeField(auto_now=True, editable=False)
+    _id = models.CharField(max_length=128, unique=True)
+    index = models.IntegerField(unique=True)
+    guid = models.CharField(max_length=128, unique=True) # UUI
+    has_died = models.BooleanField()
+    balance = models.DecimalField(max_digits=10, decimal_places=2)
+    picture = models.URLField()
+    age = models.IntegerField()
+    eyeColor = models.CharField(max_length=32)
+    name = models.CharField(max_length=128)
+    gender = models.CharField(max_length=2, choices=GENDER_CHOICES)
+    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True)
+    email = models.EmailField()
+    phone = models.CharField(max_length=128)
+    address = models.CharField(max_length=256)
+    about = models.TextField()
+    registered = models.DateTimeField()
+    tags = models.ManyToManyField(Tag)
+    friends = models.ManyToManyField("self")
+    greeting = models.CharField(max_length=256)
+    favouriteFruits = models.ManyToManyField(Fruit)
+    favouriteVegetables = models.ManyToManyField(Vegetable)
+
+    def __str__(self):
+        return self.name
