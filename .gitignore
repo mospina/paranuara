@@ -1,3 +1,4 @@
+settings_local.py
 VENV
 __pycache__
 *.pyc
