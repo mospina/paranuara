@@ -43,7 +43,12 @@ class Person(models.Model):
     eyeColor = models.CharField(max_length=32)
     name = models.CharField(max_length=128)
     gender = models.CharField(max_length=2, choices=GENDER_CHOICES)
-    company = models.ForeignKey(Company, on_delete=models.SET_NULL, null=True)
+    company = models.ForeignKey(
+        Company,
+        related_name='employees',
+        on_delete=models.SET_NULL,
+        null=True
+    )
     email = models.EmailField()
     phone = models.CharField(max_length=128)
     address = models.CharField(max_length=256)
