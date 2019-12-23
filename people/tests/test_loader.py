@@ -198,23 +198,6 @@ class TestLoader(TestCase):
         self.assertIn('strawberry', fruits)
         self.assertIn('cookie', unknown)
 
-    @skip('Test will fail as company is not loaded')
-    def test_load_data_from_file(self):
-        before_count = Person.objects.count()
-        loader.load_data_from_file('../../resources/people.json')
-        after_count = Person.objects.count()
-
-        self.assertGreater(after_count, before_count)
-
-    @skip('Test will fail as company is not loaded')
-    def test_entries_must_be_unique(self):
-        loader.load_data_from_file('../../resources/people.json')
-        before_count = Person.objects.count()
-        loader.load_data_from_file('../../resources/people.json')
-        after_count = Person.objects.count()
-
-        self.assertEqual(after_count, before_count)
-
     def test_get_fruits(self):
         fruits = ['apple', 'strawberry']
         objs = loader.get_fruits(fruits)
@@ -238,8 +221,8 @@ class TestLoader(TestCase):
 
     def test_get_company(self):
         company = '5'
-        with self.assertRaises(Company.DoesNotExist):
-            loader.get_company(company)
+        # Return None when company doesn't exist
+        self.assertIsNone(loader.get_company(company))
 
         Company.objects.create(index=5)
         obj = loader.get_company(company)
