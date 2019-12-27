@@ -187,40 +187,40 @@ PEOPLE = """
 ]
 """
 
-class TestLoader(TestCase):
 
+class TestLoader(TestCase):
     def test_split_favourite_food(self):
-        favourite_food = ['cucumber', 'beetroot', 'strawberry', 'cookie']
+        favourite_food = ["cucumber", "beetroot", "strawberry", "cookie"]
         (fruits, vegetables, unknown) = loader.split_favourite_food(favourite_food)
 
-        self.assertIn('cucumber', vegetables)
-        self.assertIn('beetroot', vegetables)
-        self.assertIn('strawberry', fruits)
-        self.assertIn('cookie', unknown)
+        self.assertIn("cucumber", vegetables)
+        self.assertIn("beetroot", vegetables)
+        self.assertIn("strawberry", fruits)
+        self.assertIn("cookie", unknown)
 
     def test_get_fruits(self):
-        fruits = ['apple', 'strawberry']
+        fruits = ["apple", "strawberry"]
         objs = loader.get_fruits(fruits)
         self.assertTrue(len(objs) > 0)
         for f in objs:
             self.assertIsInstance(f, Fruit)
 
     def test_get_vegetables(self):
-        vegetables = ['cucumber', 'beetroot']
+        vegetables = ["cucumber", "beetroot"]
         objs = loader.get_vegetables(vegetables)
         self.assertTrue(len(objs) > 0)
         for f in objs:
             self.assertIsInstance(f, Vegetable)
 
     def test_get_tags(self):
-        tags = ['cupidatat', 'id', 'anim', 'tempor']
+        tags = ["cupidatat", "id", "anim", "tempor"]
         objs = loader.get_tags(tags)
         self.assertTrue(len(objs) > 0)
         for o in objs:
             self.assertIsInstance(o, Tag)
 
     def test_get_company(self):
-        company = '5'
+        company = "5"
         # Return None when company doesn't exist
         self.assertIsNone(loader.get_company(company))
 
@@ -231,36 +231,29 @@ class TestLoader(TestCase):
     def test_currency_to_decimal(self):
         currency = "$2,418.59"
         # Empty string returns 0
-        self.assertEqual(0, loader.currency_to_decimal(''))
+        self.assertEqual(0, loader.currency_to_decimal(""))
         # Wrong representation of currency returns 0
-        self.assertEqual(0, loader.currency_to_decimal('AUD2345'))
+        self.assertEqual(0, loader.currency_to_decimal("AUD2345"))
         # String representing currency return decimal values
         result = loader.currency_to_decimal(currency)
         self.assertIsInstance(result, Decimal)
         self.assertEqual(Decimal(2418.59), result)
 
     def test_format_date(self):
-        input_date = '2016-07-13T12:29:07 -10:00'
-        output_date = '2016-07-13 02:29:07'
-        self.assertEqual(
-            output_date, 
-            loader.format_date(input_date)
-        )
+        input_date = "2016-07-13T12:29:07 -10:00"
+        output_date = "2016-07-13 02:29:07"
+        self.assertEqual(output_date, loader.format_date(input_date))
 
     def test_get_person(self):
-        Company.objects.create(index=0, name='NETBOOK')
-        Company.objects.create(index=1, name='NETBOOK')
-        Company.objects.create(index=2, name='NETBOOK')
-       
+        Company.objects.create(index=0, name="NETBOOK")
+        Company.objects.create(index=1, name="NETBOOK")
+        Company.objects.create(index=2, name="NETBOOK")
+
         data = json.loads(PEOPLE)
         # Return None when person is empty
         self.assertIsNone(loader.get_person({}, data))
         # Return a Person object on success
-        self.assertIsInstance(
-            loader.get_person(data[0], data),
-            Person
-        )
-
+        self.assertIsInstance(loader.get_person(data[0], data), Person)
 
     @skip
     def test_get_friends(self):
@@ -300,11 +293,11 @@ class TestLoader(TestCase):
                 else:
                     return [fn_for_person(find_person(people[0], json_data))] + fn_for_lop(people[1:])
         """
-        person0 = {"index": 0, "friends": [{"index": 1}] }
-        person1 = {"index": 1, "friends": [{"index": 2 }, {"index": 0}] }
-        person2 = {"index": 2, "friends": [{"index": 1}] }
+        person0 = {"index": 0, "friends": [{"index": 1}]}
+        person1 = {"index": 1, "friends": [{"index": 2}, {"index": 0}]}
+        person2 = {"index": 2, "friends": [{"index": 1}]}
         people = [person0, person1, person2]
-        objs = Person.get_friends(person0['friends'], people)
+        objs = Person.get_friends(person0["friends"], people)
         self.assertTrue(len(objs) > 0)
         for o in objs:
             self.assertIsInstance(o, Person)

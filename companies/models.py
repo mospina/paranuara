@@ -2,6 +2,7 @@ import json
 
 from django.db import models
 
+
 class Company(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
@@ -16,12 +17,9 @@ class Company(models.Model):
         """
         Save the data from a json file in the RDB
         """
-        with open(file_path, newline='') as fh:
+        with open(file_path, newline="") as fh:
             json_data = json.load(fh)
         fh.close()
 
         for entry in json_data:
-            cls.objects.get_or_create(
-                index=entry['index'],
-                name=entry['company']
-            )
+            cls.objects.get_or_create(index=entry["index"], name=entry["company"])

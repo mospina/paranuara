@@ -5,7 +5,7 @@ from rest_framework import status
 from .models import Company
 from .serializers import CompanySerializer
 
-# Create your views here.
+
 class CompanyDetail(APIView):
     """
     Retrieve a company

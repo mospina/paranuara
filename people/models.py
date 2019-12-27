@@ -1,16 +1,14 @@
+from collections import namedtuple
 from django.db import models
 
 from companies.models import Company
 
-GENDER_CHOICES = (
-    ('M', 'Male'),
-    ('F', 'Female'),
-    ('N', 'No response')
-)
+GENDER_CHOICES = (("M", "Male"), ("F", "Female"), ("N", "No response"))
 
-KNOWN_FRUITS = ['orange', 'banana', 'strawberry', 'apple']
+KNOWN_FRUITS = ["orange", "banana", "strawberry", "apple"]
 
-KNOWN_VEGETABLES = ['cucumber', 'carrot', 'celery', 'beetroot']
+KNOWN_VEGETABLES = ["cucumber", "carrot", "celery", "beetroot"]
+
 
 class Tag(models.Model):
     label = models.CharField(max_length=64)
@@ -18,11 +16,13 @@ class Tag(models.Model):
     def __str__(self):
         return self.label
 
+
 class Fruit(models.Model):
     name = models.CharField(max_length=32)
 
     def __str__(self):
         return self.name
+
 
 class Vegetable(models.Model):
     name = models.CharField(max_length=32)
@@ -30,12 +30,13 @@ class Vegetable(models.Model):
     def __str__(self):
         return self.name
 
+
 class Person(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, editable=False)
     modified_at = models.DateTimeField(auto_now=True, editable=False)
     _id = models.CharField(max_length=128, unique=True)
     index = models.IntegerField(unique=True)
-    guid = models.CharField(max_length=128, unique=True) # UUI
+    guid = models.CharField(max_length=128, unique=True)  # UUI
     has_died = models.BooleanField()
     balance = models.DecimalField(max_digits=10, decimal_places=2)
     picture = models.URLField()
@@ -44,10 +45,7 @@ class Person(models.Model):
     name = models.CharField(max_length=128)
     gender = models.CharField(max_length=2, choices=GENDER_CHOICES)
     company = models.ForeignKey(
-        Company,
-        related_name='employees',
-        on_delete=models.SET_NULL,
-        null=True
+        Company, related_name="employees", on_delete=models.SET_NULL, null=True
     )
     email = models.EmailField()
     phone = models.CharField(max_length=128)
@@ -62,3 +60,6 @@ class Person(models.Model):
 
     def __str__(self):
         return self.name
+
+
+People = namedtuple("People", ["friends", "people"])
