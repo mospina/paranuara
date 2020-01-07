@@ -27,29 +27,33 @@ def get_person(person, data):
     fruits, vegetables, _unknown = split_favourite_food(person["favouriteFood"])
 
     obj, _ = Person.objects.get_or_create(
-        _id=person["_id"],
         index=person["index"],
-        guid=person["guid"],
-        has_died=person["has_died"],
-        balance=currency_to_decimal(person["balance"]),
-        picture=person["picture"],
-        age=person["age"],
-        eyeColor=person["eyeColor"],
-        name=person["name"],
-        gender=person["gender"],
-        email=person["email"],
-        phone=person["phone"],
-        address=person["address"],
-        about=person["about"],
-        registered=format_date(person["registered"]),
-        greeting=person["greeting"],
+        defaults={
+            "_id": person["_id"],
+            "guid": person["guid"],
+            "has_died": person["has_died"],
+            "balance": currency_to_decimal(person["balance"]),
+            "picture": person["picture"],
+            "age": person["age"],
+            "eyeColor": person["eyeColor"],
+            "name": person["name"],
+            "gender": get_gender(person["gender"]),
+            "email": person["email"],
+            "phone": person["phone"],
+            "address": person["address"],
+            "about": person["about"],
+            "registered": format_date(person["registered"]),
+            "greeting": person["greeting"],
+        },
     )
     obj.tags.add(*get_tags(person["tags"]))
     # favouriteFood
     obj.favouriteFruits.add(*get_fruits(fruits))
     obj.favouriteVegetables.add(*get_vegetables(vegetables))
     # friends
-    friends = get_friends(person["friends"], data)
+    friends = get_friends(
+        [p for p in person["friends"] if p["index"] != person["index"]], data
+    )
     for friend in friends:
         if friend:
             obj.friends.add(friend)
@@ -57,6 +61,8 @@ def get_person(person, data):
     company = get_company(person["company_id"])
     if company:
         obj.company = company
+
+    obj.save()
     return obj
 
 
@@ -64,8 +70,8 @@ def get_friends(friends, data):
     """
     Given a list of friends' ids return a list of Person Objects
 
-    [person_index], data -> [Person]
-    - person_index: is the unique identifier for a person given in the data
+    [{index: int}], data -> [Person]
+    - index: is the unique identifier for a person given in the data
     - data: is the list of people in json format
     """
     if not friends:
@@ -213,3 +219,15 @@ def split_favourite_food(
             unknown.append(i)
 
     return (fruits, vegetables, unknown)
+
+
+def get_gender(gender):
+    gender = gender.capitalize()
+
+    if gender in ("M", "Male"):
+        return "M"
+
+    if gender in ("F", "Female"):
+        return "F"
+
+    return "N"
