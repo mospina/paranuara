@@ -1,0 +1,6 @@
+[client]
+database = paranuara
+user = root
+password = secret
+host = 127.0.0.1
+default-character-set = utf8
